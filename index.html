@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>云梯 AI 销售/客服系统 - 用户前台工作台</title>
+  <style>
+    :root { --bg:#f4f7fb;--panel:#fff;--line:#e5eaf2;--text:#1a2233;--sub:#6d778b;--brand:#0f6fff;--ok:#16a34a;--warn:#f59e0b;--gray:#eef2f7; }
+    *{box-sizing:border-box} body{margin:0;font-family:"PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--text)}
+    .hidden{display:none!important}.btn{border:0;border-radius:10px;padding:9px 12px;cursor:pointer}.btn-primary{background:var(--brand);color:#fff}.btn-ghost{background:#f1f5fb}.btn-ok{background:var(--ok);color:#fff}
+    .input{width:100%;border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+    .activate{min-height:100vh;display:grid;place-items:center;padding:16px}
+    .card{width:min(460px,100%);background:#fff;border:1px solid var(--line);border-radius:16px;padding:24px}
+    .app{min-height:100vh;display:grid;grid-template-rows:56px 1fr}
+    .top{display:flex;justify-content:space-between;align-items:center;padding:0 16px;background:#fff;border-bottom:1px solid var(--line)}
+    .layout{display:grid;grid-template-columns:320px 1fr 340px;min-height:0}
+    .panel{background:#fff;min-height:0;display:flex;flex-direction:column;border-right:1px solid var(--line)} .panel.right{border-right:0;border-left:1px solid var(--line)}
+    .left-h{padding:12px;border-bottom:1px solid var(--line)} .stat{display:inline-block;background:#fff5e8;color:#ad6800;border-radius:8px;padding:6px 8px;font-size:12px}
+    .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.tab{font-size:12px;padding:5px 8px;border:1px solid var(--line);border-radius:999px;background:#fff;cursor:pointer}.tab.active{background:#eaf2ff;border-color:#9cc1ff;color:#245fc2}
+    .sessions{overflow:auto;padding:8px;display:flex;flex-direction:column;gap:6px}.s-item{display:grid;grid-template-columns:34px 1fr auto;gap:8px;padding:9px;border-radius:10px;cursor:pointer;border:1px solid transparent}.s-item.active{background:#f3f8ff;border-color:#c2d9ff}
+    .avatar{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;background:linear-gradient(135deg,#b9d4ff,#88b3ff);font-weight:700}.meta{font-size:11px;color:#71809a}
+    .chat{display:grid;grid-template-rows:auto 1fr auto;min-height:0}.chat-h{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+    .chat-b{overflow:auto;padding:12px;background:#f8fbff;display:flex;flex-direction:column;gap:10px}.row{display:flex}.row.r{justify-content:flex-end}.msg{max-width:78%}.who{font-size:11px;color:#6b7790;margin-bottom:3px}
+    .bubble{border-radius:12px;padding:9px 11px;font-size:14px}.customer{background:var(--gray)}.ai{background:#e7f1ff}.human{background:#dcf8e6}
+    .box{margin-top:6px;background:#fff;border:1px solid #cbe0ff;border-radius:10px;padding:8px}
+    .chat-i{border-top:1px solid var(--line);padding:10px;background:#fff}.tip{font-size:12px;color:#a85c00;background:#fff5e8;border:1px solid #ffd8a8;border-radius:8px;padding:6px 8px;margin-bottom:6px}
+    .send{display:grid;grid-template-columns:1fr auto;gap:7px}.actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:7px}
+    .right-h{padding:12px;border-bottom:1px solid var(--line);font-weight:700}.right-b{padding:12px;overflow:auto}
+    .modal{position:fixed;inset:0;background:rgba(0,0,0,.35);display:grid;place-items:center;padding:12px}.modal.hidden{display:none}
+    .modal-c{width:min(860px,100%);background:#fff;border-radius:14px}.modal-h{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}.modal-b{padding:12px 14px}
+    .kpis{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}.kpi{border:1px solid var(--line);border-radius:10px;padding:8px;background:#fafcff}.n{font-size:20px;font-weight:700}
+    .toastw{position:fixed;right:12px;bottom:12px;display:flex;flex-direction:column;gap:8px}.toast{background:#1f2937;color:#fff;padding:9px 11px;border-radius:9px;font-size:13px}
+    @media (max-width:1100px){.layout{grid-template-columns:300px 1fr}.panel.right{display:none}.kpis{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:860px){.layout{grid-template-columns:1fr}.panel.left{max-height:310px;border-bottom:1px solid var(--line)}}
+  </style>
+</head>
+<body>
+  <div id="activateView" class="activate">
+    <div class="card">
+      <h1 style="margin:0 0 8px">云梯 AI 工作台</h1>
+      <p style="margin:0 0 14px;color:#6d778b">企业客户激活后可查看消息、人工回复与数据</p>
+      <input id="codeInput" class="input" placeholder="请输入激活码" value="cjh666" />
+      <button id="activateBtn" class="btn btn-primary" style="margin-top:10px;width:100%">开通使用</button>
+    </div>
+  </div>
+
+  <div id="appView" class="app hidden">
+    <div class="top"><div><strong>云梯 AI 销售/客服系统</strong> <span id="agentBadge" style="font-size:12px;background:#eaf2ff;color:#245fc2;padding:4px 8px;border-radius:999px"></span></div><button id="openDataBtn" class="btn btn-ghost">查看数据</button></div>
+    <div class="layout">
+      <aside class="panel left"><div class="left-h"><span id="pending" class="stat">待人工介入 0</span><div id="tabs" class="tabs"></div><select id="agentSwitch" class="input" style="margin-top:8px"></select></div><div id="sessions" class="sessions"></div></aside>
+      <main class="chat"><div class="chat-h"><div><div id="chatName" style="font-weight:700"></div><div id="chatSub" class="meta"></div></div><span id="intent" style="font-size:12px;background:#f2f5fb;padding:4px 8px;border-radius:999px"></span></div><div id="chatBody" class="chat-b"></div><div class="chat-i"><div id="inputTip" class="tip hidden"></div><div class="send"><input id="msgInput" class="input" placeholder="输入回复内容" /><button id="sendBtn" class="btn btn-ok">发送</button></div><div class="actions"><button id="sendImageBtn" class="btn btn-ghost">发送图片</button><button id="sendProductBtn" class="btn btn-ghost">发送产品链接</button><button id="sendAssetBtn" class="btn btn-ghost">发送素材</button><button id="aiSuggestBtn" class="btn btn-primary">AI 建议</button></div><input id="imgPicker" class="hidden" type="file" accept="image/*" /></div></main>
+      <aside class="panel right"><div id="rightTitle" class="right-h">客户摘要</div><div id="rightBody" class="right-b"></div></aside>
+    </div>
+  </div>
+
+  <div id="dataModal" class="modal hidden"><div class="modal-c"><div class="modal-h"><strong>数据分析</strong><button class="btn btn-ghost" data-close="dataModal">关闭</button></div><div class="modal-b"><div id="kpis" class="kpis"></div><h4>产品推荐次数排行榜</h4><ul id="rankList"></ul></div></div></div>
+  <div id="productModal" class="modal hidden"><div class="modal-c" style="width:min(520px,100%)"><div class="modal-h"><strong>选择产品链接</strong><button class="btn btn-ghost" data-close="productModal">关闭</button></div><div id="productList" class="modal-b"></div></div></div>
+  <div id="assetModal" class="modal hidden"><div class="modal-c" style="width:min(560px,100%)"><div class="modal-h"><strong>素材库</strong><button class="btn btn-ghost" data-close="assetModal">关闭</button></div><div id="assetList" class="modal-b" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div></div></div>
+  <div id="toastw" class="toastw"></div>
+
+<script>
+const STORAGE_KEY='yunti_frontdesk_activated';
+const validCodes={cjh666:'active',ACT123456:'active',VIP2026001:'active',YUNTI88888:'active',STOP000001:'stopped'};
+const filters=['全部','AI 接待中','待人工介入','人工处理中','已结束'];
+const products=[{name:'云梯 AI 线索引擎 Pro',price:'¥2,980/月',point:'自动打标高意向客户，接入CRM',url:'https://demo.yunti.ai/pro'},{name:'云梯 AI 客服机器人 Plus',price:'¥1,680/月',point:'7x24自动回复，支持多渠道',url:'https://demo.yunti.ai/chat'},{name:'云梯 私域转化套件',price:'¥3,680/季度',point:'微信运营+复购提醒+活动模板',url:'https://demo.yunti.ai/private'}];
+const assets=['新品海报A','节日活动B','促销讲解图C','对比表模板D','客户案例图E','直播预热图F'];
+const analytics={kpis:[['今日消息量','486'],['人工接入量','73'],['AI 接待量','413'],['平均响应时间','28秒'],['高意向客户数','39']],ranks:[['云梯 AI 线索引擎 Pro',126],['云梯 AI 客服机器人 Plus',109],['私域转化套件',84],['直播话术包',63],['行业案例集',45]]};
+const el=id=>document.getElementById(id); const now=()=>{const d=new Date();return `${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`};
+const M=(role,text,extra={})=>({id:crypto.randomUUID(),role,text,time:now(),...extra});
+const S=(name,channel,status,intent,preview,time,messages)=>({id:crypto.randomUUID(),name,channel,status,intent,preview,time,firstVisit:'2026-05-10 14:35',interested:products[Math.floor(Math.random()*products.length)].name,history:'最近7天访问3次，AI接待2次，人工接入1次',messages});
+const botData={'智能客服-Amy':[S('林涛','网站','待人工介入','高意向-产品咨询','想了解你们的企业版权限','09:12',[M('customer','你好，我在官网看到企业版，支持多坐席吗？'),M('ai','您好，企业版支持多坐席和权限管理，我先给您看下核心方案。',{tag:'AI'}),M('ai-product','',{product:products[0]}),M('customer','如果10个坐席，价格有优惠吗？')]),S('张女士','微信','AI 接待中','中意向-价格对比','AI 正在讲解方案差异','09:20',[M('customer','标准版和plus版差别在哪？'),M('ai','我给您整理了一个对比图，方便快速决策。',{tag:'AI'}),M('ai-image','',{label:'方案对比示意图'})]),S('锐创科技','网站','人工处理中','高意向-采购咨询','已询问合同周期','08:58',[M('customer','我们计划季度采购，能先试用吗？'),M('ai','可以安排7天试用，我已通知人工同事跟进。',{tag:'AI'}),M('human','您好，我是客服Mia，稍后给您发试用协议。',{tag:'客服'})]),S('周宁','微信','已结束','低意向-售后','已完成退款说明','昨天',[M('customer','已续费还能退款吗？'),M('human','已为您说明退款规则，感谢理解。',{tag:'客服'})]),S('吴江门店','网站','待人工介入','高意向-落地页搭建','要看成功案例','09:25',[M('customer','你们有教育行业案例吗？'),M('ai','有的，我先给您发一张案例素材。',{tag:'AI'}),M('ai-image','',{label:'教育行业案例图'}),M('customer','可以安排顾问详细讲下吗？')]),S('刘峰','微信','AI 接待中','中意向-功能确认','咨询知识库导入','09:30',[M('customer','可以导入我们的FAQ吗？'),M('ai','支持Excel和API导入，我已发送功能卡片。',{tag:'AI'}),M('ai-product','',{product:products[1]})]),S('泛海集团','网站','人工处理中','高意向-定制需求','等待报价回复','09:02',[M('customer','我们需要私有化部署。'),M('human','已记录需求，今天17:00前给您报价。',{tag:'客服'})]),S('韩雪','微信','待人工介入','中意向-活动咨询','询问节日模板','09:14',[M('customer','有618活动素材吗？'),M('ai','有现成模板，建议人工协助你快速上线。',{tag:'AI'}),M('customer','那麻烦人工帮我选一套。')]),S('嘉木电商','网站','已结束','中意向-体验结束','已预约回访','昨天',[M('customer','好的，那我先内部评估。'),M('human','没问题，我已为您预约周一回访。',{tag:'客服'})])],'智能客服-Ken':[S('晨光财税','微信','AI 接待中','高意向-套餐咨询','AI推荐企业版','09:21',[M('customer','我们40人团队适合哪个套餐？'),M('ai','建议企业版，我把亮点发给您。',{tag:'AI'}),M('ai-product','',{product:products[0]})]),S('北川咨询','网站','待人工介入','中意向-价格议价','希望折扣','09:16',[M('customer','年付能打几折？'),M('ai','已转人工为您申请报价。',{tag:'AI'})]),S('华贸连锁','网站','人工处理中','高意向-实施周期','确认上线计划','09:05',[M('human','我们建议2周完成部署，稍后发排期。',{tag:'客服'})]),S('宋先生','微信','已结束','低意向-仅咨询','结束会话','昨天',[M('customer','了解了谢谢。')]),S('米禾教育','网站','待人工介入','高意向-案例索取','索要案例','09:28',[M('customer','有没有K12行业客户案例？')]),S('恒宇科技','微信','AI 接待中','中意向-功能试用','AI演示中','09:23',[M('ai','我先带您看试用流程。',{tag:'AI'})]),S('方舟物流','网站','人工处理中','中意向-售前咨询','等待人工','09:08',[M('customer','客服在吗？'),M('human','在的，我来协助您。',{tag:'客服'})]),S('清流传媒','微信','已结束','中意向-复购','已下单','昨天',[M('human','已为您开通续费权益。',{tag:'客服'})])]};
+let currentAgent='智能客服-Amy',currentFilter='全部',currentSessionId=null,rightMode='summary';
+const toast=(t,err=false)=>{const n=document.createElement('div');n.className='toast';if(err)n.style.background='#b91c1c';n.textContent=t;el('toastw').appendChild(n);setTimeout(()=>n.remove(),2200)};
+const sessions=()=>botData[currentAgent]||[]; const current=()=>sessions().find(s=>s.id===currentSessionId);
+function renderRight(){const s=current();if(!s)return;const b=el('rightBody');if(rightMode==='suggest'){el('rightTitle').textContent='AI 建议回复';const txt=`您好 ${s.name}，基于您的需求，我建议先使用「${s.interested}」进行 7 天试用。\n如果您方便，我可以现在为您申请专属优惠和实施排期。`;b.innerHTML=`<div style="border:1px solid #b9d4ff;background:#f2f8ff;border-radius:10px;padding:10px;line-height:1.6">${txt.replace(/\n/g,'<br>')}</div><button id="useS" class="btn btn-primary" style="margin-top:8px">使用</button>`;el('useS').onclick=()=>{el('msgInput').value=txt;toast('已将 AI 建议填入输入框')}}else{el('rightTitle').textContent='客户摘要';b.innerHTML=`<div>首次访问时间：${s.firstVisit}</div><div style="margin-top:8px">感兴趣产品：${s.interested}</div><div style="margin-top:8px">AI 判断意图：${s.intent}</div><div style="margin-top:8px">简要历史：${s.history}</div>`}}
+function renderInputState(){const s=current();if(!s)return;const lock=s.status==='AI 接待中'||s.status==='已结束';['msgInput','sendBtn','sendImageBtn','sendProductBtn','sendAssetBtn','aiSuggestBtn'].forEach(id=>el(id).disabled=lock);const tip=el('inputTip');if(s.status==='AI 接待中'){tip.classList.remove('hidden');tip.textContent='AI 自动接待中，无需回复'}else if(s.status==='已结束'){tip.classList.remove('hidden');tip.textContent='该会话已结束，无法继续发送'}else tip.classList.add('hidden')}
+function renderChat(){const s=current();if(!s)return;el('chatName').textContent=s.name;el('chatSub').textContent=`来源：${s.channel} | 状态：${s.status}`;el('intent').textContent=s.intent;const box=el('chatBody');box.innerHTML='';s.messages.forEach(m=>{const row=document.createElement('div');row.className=`row ${m.role.startsWith('human')?'r':''}`;const msg=document.createElement('div');msg.className='msg';if(m.tag){const who=document.createElement('div');who.className='who';who.textContent=m.tag;msg.appendChild(who)}const b=document.createElement('div');const type=m.role.startsWith('customer')?'customer':m.role.startsWith('ai')?'ai':'human';b.className=`bubble ${type}`;b.textContent=m.text||(m.role==='ai-product'?'为您推荐以下产品：':m.role==='ai-image'?'可参考这份素材：':'');msg.appendChild(b);if(m.role.includes('product')&&m.product){const c=document.createElement('div');c.className='box';c.innerHTML=`<div><b>${m.product.name}</b></div><div style="color:#e11d48;font-weight:700">${m.product.price}</div><div style="font-size:12px;color:#5f6980;margin:6px 0">${m.product.point}</div><button class="btn btn-primary" style="padding:6px 8px;font-size:12px" onclick="window.open('${m.product.url}','_blank')">查看链接</button>`;msg.appendChild(c)}if(m.role.includes('image')||m.role.includes('asset')){const c=document.createElement('div');c.className='box';c.innerHTML=`<div style="height:110px;border-radius:8px;background:linear-gradient(135deg,#d2e4ff,#b4f2da);display:grid;place-items:center">${m.label||'图片素材'}</div>`;msg.appendChild(c)}row.appendChild(msg);box.appendChild(row)});box.scrollTop=box.scrollHeight;renderInputState()}
+function refresh(selectFirst=false){const all=sessions();el('pending').textContent=`待人工介入 ${all.filter(s=>s.status==='待人工介入').length}`;el('agentBadge').textContent=currentAgent;const list=all.filter(s=>currentFilter==='全部'||s.status===currentFilter);const w=el('sessions');w.innerHTML='';if(!list.length)w.innerHTML='<div style="padding:16px;color:#6d778b;text-align:center">当前筛选暂无会话</div>';list.forEach(s=>{const d=document.createElement('div');d.className=`s-item ${s.id===currentSessionId?'active':''}`;d.innerHTML=`<div class="avatar">${s.name.slice(0,1)}</div><div><div style="font-size:14px;font-weight:600">${s.name}</div><div style="font-size:12px;color:#6d778b">${s.preview}</div><div class="meta">${s.channel} · ${s.status}${s.status==='待人工介入'?' · ●':''}</div></div><div class="meta">${s.time}</div>`;d.onclick=()=>{currentSessionId=s.id;rightMode='summary';refresh();renderChat();renderRight();toast(`已切换到 ${s.name}`)};w.appendChild(d)});if((selectFirst||!list.some(s=>s.id===currentSessionId))&&list[0])currentSessionId=list[0].id;renderChat();renderRight()}
+function send(text,role='human',extra={}){const s=current();if(!s)return;s.messages.push(M(role,text,{tag:role.startsWith('human')?'客服':undefined,...extra}));s.preview=text||extra.label||'已发送内容';s.time=now();refresh();renderChat()}
+function autoReply(){const s=current();if(!s||s.status==='已结束')return;const rs=['明白了，那你们最快什么时候可以上线？','可以把这个方案发到我微信吗？','如果今天下单有额外优惠吗？','好的，我先看下资料，稍后回复你。'];setTimeout(()=>{s.messages.push(M('customer',rs[Math.floor(Math.random()*rs.length)]));s.preview=s.messages[s.messages.length-1].text;s.time=now();refresh();renderChat()},1200+Math.random()*1500)}
+function open(id){el(id).classList.remove('hidden')} function close(id){el(id).classList.add('hidden')}
+function initApp(){el('agentSwitch').innerHTML=Object.keys(botData).map(v=>`<option>${v}</option>`).join('');el('agentSwitch').value=currentAgent;el('agentSwitch').onchange=()=>{currentAgent=el('agentSwitch').value;currentFilter='全部';document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',i===0));currentSessionId=null;refresh(true);toast(`已切换视图：${currentAgent}`)};el('tabs').innerHTML=filters.map((f,i)=>`<button class="tab ${i===0?'active':''}" data-f="${f}">${f}</button>`).join('');document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{currentFilter=t.dataset.f;document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');refresh(true)});
+  el('kpis').innerHTML=analytics.kpis.map(([k,v])=>`<div class="kpi"><div>${k}</div><div class="n">${v}</div></div>`).join('');el('rankList').innerHTML=analytics.ranks.map((r,i)=>`<li>${i+1}. ${r[0]} - ${r[1]} 次</li>`).join('');
+  el('productList').innerHTML=products.map((p,i)=>`<button class="btn btn-ghost" style="width:100%;text-align:left;margin-bottom:8px" data-p="${i}"><b>${p.name}</b><div style="font-size:12px;color:#6d778b">${p.price} · ${p.point}</div></button>`).join('');document.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>{const p=products[+b.dataset.p];send('为您发送产品链接','human-product',{product:p});toast('产品链接已发送');close('productModal');autoReply()});
+  el('assetList').innerHTML=assets.map((a,i)=>`<button class="btn btn-ghost" data-a="${i}"><div style="height:70px;border-radius:8px;background:linear-gradient(130deg,#dce9ff,#c9f5df);display:grid;place-items:center">${a}</div></button>`).join('');document.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>{send('','human-asset',{label:assets[+b.dataset.a]});toast('素材已发送');close('assetModal');autoReply()});
+  refresh(true)
+}
+el('activateBtn').onclick=()=>{const code=el('codeInput').value.trim();if(!code)return toast('请输入激活码',true);const state=validCodes[code];if(state==='active'){localStorage.setItem(STORAGE_KEY,'1');el('activateView').classList.add('hidden');el('appView').classList.remove('hidden');initApp();toast('激活成功，欢迎使用云梯 AI 工作台')}else toast('激活码无效或已停用，请联系支持',true)};
+el('codeInput').addEventListener('keydown',e=>{if(e.key==='Enter')el('activateBtn').click()});
+el('sendBtn').onclick=()=>{const t=el('msgInput').value.trim();if(!t)return toast('请输入消息内容',true);send(t,'human');el('msgInput').value='';toast('消息发送成功');autoReply()};
+el('sendImageBtn').onclick=()=>el('imgPicker').click();el('imgPicker').onchange=e=>{const f=e.target.files[0];if(!f)return;send('','human-image',{label:`图片：${f.name}`});toast('图片发送成功');autoReply();e.target.value=''};
+el('sendProductBtn').onclick=()=>open('productModal');el('sendAssetBtn').onclick=()=>open('assetModal');el('aiSuggestBtn').onclick=()=>{rightMode='suggest';renderRight();toast('已生成 AI 建议回复')};el('openDataBtn').onclick=()=>open('dataModal');document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>close(b.dataset.close));['dataModal','productModal','assetModal'].forEach(id=>el(id).addEventListener('click',e=>{if(e.target.id===id)close(id)}));
+if(localStorage.getItem(STORAGE_KEY)==='1'){el('activateView').classList.add('hidden');el('appView').classList.remove('hidden');initApp()}
+</script>
+</body>
+</html>
